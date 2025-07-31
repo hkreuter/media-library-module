@@ -30,4 +30,6 @@ interface MediaRepositoryInterface
     public function deleteMedia(string $idToRemove): void;
 
     public function changeMediaFolderId(string $mediaIdToUpdate, string $newFolderId): void;
+
+    public function saveAltText(string $mediaId, string $altText): void;
 }

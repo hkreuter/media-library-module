@@ -30,7 +30,8 @@ class MediaFactory implements MediaFactoryInterface
             fileType: (string)$item['DDFILETYPE'],
             imageSize: $mediaSize,
             folderId: $item['DDFOLDERID'],
-            folderName: $item['FOLDERNAME'] ?? ''
+            folderName: $item['FOLDERNAME'] ?? '',
+            altText: $item['ALTTEXT'] ?? ''
         );
     }
 }

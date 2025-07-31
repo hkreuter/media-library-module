@@ -259,4 +259,42 @@ class MediaController extends AdminDetailsController
         $breadcrumbService = $this->getService(BreadcrumbServiceInterface::class);
         return $breadcrumbService->getBreadcrumbsByRequest();
     }
+
+    /**
+     * Save alt text for media item
+     */
+    public function saveAltText(): void
+    {
+        $request = Registry::getRequest();
+        $responseService = $this->getService(ResponseInterface::class);
+        $mediaRepository = $this->getService(MediaRepositoryInterface::class);
+
+        try {
+            $mediaId = $request->getRequestEscapedParameter('id');
+            $altText = $request->getRequestEscapedParameter('alttext');
+
+            if (!$mediaId) {
+                $responseService->errorResponseAsJson(
+                    code: 400,
+                    message: 'Media ID is required',
+                    valueArray: ['error' => 'DD_MEDIA_ID_REQUIRED']
+                );
+                return;
+            }
+
+            // Save the alt text
+            $mediaRepository->saveAltText($mediaId, $altText ?: '');
+
+            $responseService->responseAsJson([
+                'success' => true,
+                'message' => 'Alt text saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            $responseService->errorResponseAsJson(
+                code: 500,
+                message: $e->getMessage(),
+                valueArray: ['error' => 'DD_MEDIA_SAVE_ALT_TEXT_ERROR']
+            );
+        }
+    }
 }

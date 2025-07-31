@@ -81,6 +81,8 @@ class MediaLibraryClass {
 
             $('.dd-media-details-input-url', $detailForm).val(file.url);
             $('.dd-media-details-link-url', $detailForm).attr('href', file.url);
+            
+            $('.dd-media-details-input-alttext', $detailForm).val(file.alttext || '');
 
             $detailForm.show();
         }
@@ -599,6 +601,38 @@ class MediaLibraryClass {
 
                 }
 
+            });
+
+            // Handle alttext changes
+            $('.dd-media-details-input-alttext', $dialog).on('blur change', function () {
+                var $detailForm = $(this).closest('.dd-media-details-form');
+                var $activeItem = $('.dd-media-item.active', $dialog);
+                
+                if ($activeItem.length === 1) {
+                    var mediaId = $activeItem.data('id');
+                    var altText = $(this).val();
+                    
+                    // Save alttext via AJAX
+                    $.ajax({
+                        type: "POST",
+                        url: actionLink + 'cl=ddoemedia_view&fnc=saveAltText',
+                        data: {
+                            id: mediaId,
+                            alttext: altText
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Update the item data
+                                $activeItem.data('alttext', altText);
+                            } else if (response.error) {
+                                ddh.alert(ddh.translate(response.error));
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            ddh.alert('Error saving alt text: ' + error);
+                        }
+                    });
+                }
             });
 
             $('.dd-media', $dialog).on('click', '.dd-media-item', function (e) {

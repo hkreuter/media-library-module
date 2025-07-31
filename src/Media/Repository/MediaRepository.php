@@ -12,7 +12,9 @@ namespace OxidEsales\MediaLibrary\Media\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\Id;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
+use OxidEsales\LocaleMapper\Service\LocaleContextInterface;
 use OxidEsales\MediaLibrary\Media\DataType\MediaInterface;
 use OxidEsales\MediaLibrary\Media\Exception\MediaNotFoundException;
 use OxidEsales\MediaLibrary\Media\Exception\WrongMediaIdGivenException;
@@ -25,6 +27,7 @@ class MediaRepository implements MediaRepositoryInterface
         private ConnectionProviderInterface $connectionProvider,
         private ContextInterface $context,
         private MediaFactoryInterface $mediaFactory,
+        private readonly LocaleContextInterface $localeContext
     ) {
         $this->connection = $this->connectionProvider->get();
     }
@@ -82,8 +85,11 @@ class MediaRepository implements MediaRepositoryInterface
 
     public function addMedia(MediaInterface $exampleMedia): void
     {
+        $shopId = $this->context->getCurrentShopId();
+
+        // Insert media record
         $this->connection->executeQuery(
-            "insert into ddmedia SET
+            "INSERT INTO ddmedia SET
                 OXID = :OXID,
                 OXSHOPID = :OXSHOPID,
                 DDFILENAME = :DDFILENAME,
@@ -92,8 +98,8 @@ class MediaRepository implements MediaRepositoryInterface
                 DDIMAGESIZE = :DDIMAGESIZE,
                 DDFOLDERID = :DDFOLDERID",
             [
-                'OXSHOPID' => $this->context->getCurrentShopId(),
                 'OXID' => $exampleMedia->getOxid(),
+                'OXSHOPID' => $shopId,
                 'DDFILENAME' => $exampleMedia->getFileName(),
                 'DDFILESIZE' => $exampleMedia->getFileSize(),
                 'DDFILETYPE' => $exampleMedia->getFileType(),
@@ -101,12 +107,46 @@ class MediaRepository implements MediaRepositoryInterface
                 'DDFOLDERID' => $exampleMedia->getFolderId()
             ]
         );
+
+        // Save translation if altText is provided
+        if ($exampleMedia->getAltText() !== '') {
+            $localeId = $this->localeContext->getCurrentLocaleId();
+
+            $this->connection->executeQuery(
+                "REPLACE INTO ddmedia_translations SET
+                    OXID = :OXID,
+                    OXOBJECTID = :OXOBJECTID,
+                    OXLOCALEID = :OXLOCALEID,
+                    OXSHOPID = :OXSHOPID,
+                    OXALTSHORTTEXT = :OXALTSHORTTEXT",
+                [
+                    'OXID' => (string) Id::generate(),
+                    'OXOBJECTID' => $exampleMedia->getOxid(),
+                    'OXLOCALEID' => $localeId,
+                    'OXSHOPID' => $shopId,
+                    'OXALTSHORTTEXT' => $exampleMedia->getAltText()
+                ]
+            );
+        }
     }
 
     private function getMediaSelectSqlPart(): string
     {
-        return "SELECT m.*, j.DDFILENAME as FOLDERNAME FROM ddmedia m
-            LEFT JOIN ddmedia j ON j.OXID=m.DDFOLDERID AND m.DDFOLDERID <> ''";
+        $localeId = $this->localeContext->getCurrentLocaleId();
+        $shopId = $this->context->getCurrentShopId();
+
+        return "SELECT
+                    m.*,
+                    j.DDFILENAME as FOLDERNAME,
+                    t.OXALTSHORTTEXT as ALTTEXT
+                FROM ddmedia m
+                    LEFT JOIN ddmedia j
+                        ON j.OXID = m.DDFOLDERID
+                        AND m.DDFOLDERID <> ''
+                    LEFT JOIN ddmedia_translations t
+                        ON t.OXOBJECTID = m.OXID
+                        AND t.OXLOCALEID = '$localeId'
+                        AND t.OXSHOPID = '$shopId'";
     }
 
     /**
@@ -141,6 +181,12 @@ class MediaRepository implements MediaRepositoryInterface
                 'OXID' => $idToRemove
             ]
         );
+        $this->connection->executeQuery(
+            "DELETE FROM ddmedia_translations WHERE OXOBJECTID = :OXID",
+            [
+                'OXID' => $idToRemove
+            ]
+        );
     }
 
     public function changeMediaFolderId(string $mediaIdToUpdate, string $newFolderId): void
@@ -152,5 +198,43 @@ class MediaRepository implements MediaRepositoryInterface
                 'OXID' => $mediaIdToUpdate
             ]
         );
+    }
+
+    public function saveAltText(string $mediaId, string $altText): void
+    {
+        $localeId = $this->localeContext->getCurrentLocaleId();
+        $shopId = $this->context->getCurrentShopId();
+
+        if ($altText === '') {
+            // Delete translation record if altText is empty
+            $this->connection->executeQuery(
+                "DELETE FROM ddmedia_translations
+                 WHERE OXOBJECTID = :OXOBJECTID
+                 AND OXLOCALEID = :OXLOCALEID
+                 AND OXSHOPID = :OXSHOPID",
+                [
+                    'OXOBJECTID' => $mediaId,
+                    'OXLOCALEID' => $localeId,
+                    'OXSHOPID' => $shopId
+                ]
+            );
+        } else {
+            // Use REPLACE INTO to insert or update the translation
+            $this->connection->executeQuery(
+                "REPLACE INTO ddmedia_translations SET
+                    OXID = :OXID,
+                    OXOBJECTID = :OXOBJECTID,
+                    OXLOCALEID = :OXLOCALEID,
+                    OXSHOPID = :OXSHOPID,
+                    OXALTSHORTTEXT = :OXALTSHORTTEXT",
+                [
+                    'OXID' => (string) Id::generate(),
+                    'OXOBJECTID' => $mediaId,
+                    'OXLOCALEID' => $localeId,
+                    'OXSHOPID' => $shopId,
+                    'OXALTSHORTTEXT' => $altText
+                ]
+            );
+        }
     }
 }

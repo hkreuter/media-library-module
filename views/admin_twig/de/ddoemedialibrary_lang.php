@@ -56,6 +56,10 @@ $aLang = array(
     'DD_MEDIA_MOVE_FILE_ERR'          => 'Bild kann nicht verschoben werden, weil es in Verwendung ist!',
     'DD_MEDIA_RENAME_FILE_ERR'        => 'Bild oder Ordner kann nicht umbenannt werden, weil es in Verwendung ist!',
     'DD_MEDIA_IMG_URL'                => 'Bild-URL',
+    'DD_MEDIA_ALT_TEXT'               => 'Alt-Text',
+    'DD_MEDIA_ALT_TEXT_PLACEHOLDER'   => 'Alternativer Text für Barrierefreiheit eingeben',
+    'DD_MEDIA_ID_REQUIRED'            => 'Medien-ID ist erforderlich',
+    'DD_MEDIA_SAVE_ALT_TEXT_ERROR'    => 'Fehler beim Speichern des Alt-Textes',
 
     'OE_MEDIA_LIBRARY_EXCEPTION_INVALID_FILE_EXTENTION' => 'Ungültige Dateierweiterung',
     'OE_MEDIA_LIBRARY_EXCEPTION_FILENAME_EMPTY' => 'Dateiname darf nicht leer sein',
