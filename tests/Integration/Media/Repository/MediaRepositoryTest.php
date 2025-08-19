@@ -825,8 +825,13 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
         $this->assertFalse($result, 'Translation should be deleted when alt text is empty');
     }
 
-    private function createTranslationData(string $mediaId, string $localeId, int $shopId, string $altText, ?string $oxid = null): void
-    {
+    private function createTranslationData(
+        string $mediaId,
+        string $localeId,
+        int $shopId,
+        string $altText,
+        ?string $oxid = null
+    ): void {
         $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->insert("ddmedia_translations")->values([
@@ -850,14 +855,14 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
         $localeId = 'en_US';
         $shopId = 2;
         $altText = uniqid();
-        
+
         $this->createMediaItem($mediaId, $shopId);
         $this->createTranslationData($mediaId, $localeId, $shopId, $altText);
 
         $sut = $this->getSut();
         $result = $sut->getAltTextForMedia($mediaId, $localeId);
         $this->assertSame($altText, $result);
-        
+
         $resultNoTranslation = $sut->getAltTextForMedia($mediaId, 'fr_FR');
         $this->assertNull($resultNoTranslation);
     }

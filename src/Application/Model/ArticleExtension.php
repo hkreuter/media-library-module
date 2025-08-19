@@ -1,4 +1,5 @@
 <?php
+
 namespace OxidEsales\MediaLibrary\Application\Model;
 
 use OxidEsales\Eshop\Application\Model\Article;
