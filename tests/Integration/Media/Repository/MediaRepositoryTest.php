@@ -843,4 +843,22 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'OXALTSHORTTEXT' => $altText
         ])->execute();
     }
+
+    public function testGetAltTextForMedia(): void
+    {
+        $mediaId = uniqid();
+        $localeId = 'en_US';
+        $shopId = 2;
+        $altText = uniqid();
+        
+        $this->createMediaItem($mediaId, $shopId);
+        $this->createTranslationData($mediaId, $localeId, $shopId, $altText);
+
+        $sut = $this->getSut();
+        $result = $sut->getAltTextForMedia($mediaId, $localeId);
+        $this->assertSame($altText, $result);
+        
+        $resultNoTranslation = $sut->getAltTextForMedia($mediaId, 'fr_FR');
+        $this->assertNull($resultNoTranslation);
+    }
 }

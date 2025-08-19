@@ -237,4 +237,13 @@ class MediaRepository implements MediaRepositoryInterface
             );
         }
     }
+
+    public function getAltTextForMedia(string $mediaId, string $locale): ?string
+    {
+        $altText = $this->connection->fetchOne(
+            'SELECT OXALTSHORTTEXT FROM ddmedia_translations WHERE OXOBJECTID = ? AND OXLOCALEID = ?',
+            [$mediaId, $locale]
+        );
+        return $altText ?: null;
+    }
 }
