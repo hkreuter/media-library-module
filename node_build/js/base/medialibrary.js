@@ -81,7 +81,9 @@ class MediaLibraryClass {
 
             $('.dd-media-details-input-url', $detailForm).val(file.url);
             $('.dd-media-details-link-url', $detailForm).attr('href', file.url);
-            
+
+            $('.dd-media-details-input-alttext', $detailForm).val(file.alttext || '');
+
             $('.dd-media-details-input-alttext', $detailForm).val(file.alttext || '');
 
             $detailForm.show();
@@ -415,14 +417,19 @@ class MediaLibraryClass {
         }
     };
 
-    addMediaItem(id, file, filetype, filesize, thumb, imagesize) {
+    addMediaItem(id, file, filetype, filesize, thumb, imagesize, alttext) {
         var resourceLink = this._resourceLink;
         var ui = this;
         var $item = $('.dd-media-list-items .dd-media-dz-helper > div').clone();
 
         $('.dd-media-item', $item).data({
-            'id': id, 'file': file, 'filetype': filetype, 'filesize': filesize, 'imagesize': imagesize
-        });
+            'id': id,
+            'file': file,
+            'filetype': filetype,
+            'filesize': filesize,
+            'imagesize': imagesize,
+            'alttext': alttext
+        }).attr('data-alttext', alttext);
 
         if (!thumb || thumb === undefined) {
             $('.dd-media-thumb', $item).hide();
@@ -607,11 +614,43 @@ class MediaLibraryClass {
             $('.dd-media-details-input-alttext', $dialog).on('blur change', function () {
                 var $detailForm = $(this).closest('.dd-media-details-form');
                 var $activeItem = $('.dd-media-item.active', $dialog);
-                
+
                 if ($activeItem.length === 1) {
                     var mediaId = $activeItem.data('id');
                     var altText = $(this).val();
-                    
+
+                    // Save alttext via AJAX
+                    $.ajax({
+                        type: "POST",
+                        url: actionLink + 'cl=ddoemedia_view&fnc=saveAltText',
+                        data: {
+                            id: mediaId,
+                            alttext: altText
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Update the item data
+                                $activeItem.data('alttext', altText);
+                            } else if (response.error) {
+                                ddh.alert(ddh.translate(response.error));
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            ddh.alert('Error saving alt text: ' + error);
+                        }
+                    });
+                }
+            });
+
+            // Handle alttext changes
+            $('.dd-media-details-input-alttext', $dialog).on('blur change', function () {
+                var $detailForm = $(this).closest('.dd-media-details-form');
+                var $activeItem = $('.dd-media-item.active', $dialog);
+
+                if ($activeItem.length === 1) {
+                    var mediaId = $activeItem.data('id');
+                    var altText = $(this).val();
+
                     // Save alttext via AJAX
                     $.ajax({
                         type: "POST",
@@ -722,9 +761,9 @@ class MediaLibraryClass {
                             'filetype': response.filetype,
                             'filesize': response.filesize,
                             'imagesize': (response.imagesize || null),
-                            'thumb': response.thumb
-                        }).trigger('click');
-
+                            'thumb': response.thumb,
+                            'alttext': response.alttext // ensure alttext is set
+                        }).attr('data-alttext', response.alttext); // ensure data-alttext is set
                         ui._makeItemMovable($('.dd-media-item', file.previewElement));
 
                         $('.dd-media-file-count', $dialog).text(parseInt($('.dd-media-file-count', $dialog).text()) + 1);
@@ -784,7 +823,7 @@ class MediaLibraryClass {
         $.get(actionLink + 'cl=ddoemedia_view&fnc=moreFiles&start=' + start + '&folderid=' + $('.dd-media').data('folderid'), function (data) {
             if (data.files && data.files.length) {
                 $.each(data.files, function () {
-                    ui.addMediaItem(this.id, this.file, this.filetype, this.filesize, (this.thumb || false), (this.imageSize || null));
+                    ui.addMediaItem(this.id, this.file, this.filetype, this.filesize, (this.thumb || false), (this.imageSize || null), this.alttext);
                 });
             }
 
