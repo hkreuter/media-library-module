@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\Id;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
@@ -381,7 +382,6 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
         $this->assertSame($newAltText, $finalResult['OXALTSHORTTEXT']);
     }
 
-    public function testRenameMedia(): void
     #[Test]
     public function renameMedia(): void
     {
