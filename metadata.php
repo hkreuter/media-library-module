@@ -31,7 +31,7 @@ $aModule = [
         // Core
         \OxidEsales\Eshop\Core\ViewConfig::class => \OxidEsales\MediaLibrary\Transition\Core\ViewConfig::class,
         \OxidEsales\Eshop\Core\Language::class   => \OxidEsales\MediaLibrary\Language\Core\LanguageExtension::class,
-        \OxidEsales\Eshop\Application\Model\Article::class => \OxidEsales\MediaLibrary\Application\Model\ArticleExtension::class,
+        \OxidEsales\Eshop\Application\Model\Article::class => \OxidEsales\MediaLibrary\Application\Model\Article::class,
     ],
     'controllers' => [
         // Lang

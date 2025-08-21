@@ -2,11 +2,13 @@
 
 namespace OxidEsales\MediaLibrary\Application\Model;
 
-use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\LocaleMapper\Service\LocaleContextInterface;
 use OxidEsales\MediaLibrary\Media\Repository\MediaRepository;
 
-class ArticleExtension extends Article
+/**
+ * @mixin \OxidEsales\Eshop\Application\Model\Article
+ */
+class Article extends Article_parent
 {
     public function getPictureAltText(int $iIndex, string|null $locale = null): ?string
     {

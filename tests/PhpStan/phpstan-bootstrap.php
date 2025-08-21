@@ -16,3 +16,9 @@ class_alias(
     \OxidEsales\Eshop\Core\ViewConfig::class,
     \OxidEsales\MediaLibrary\Transition\Core\ViewConfig_parent::class
 );
+
+class_alias(
+    \OxidEsales\Eshop\Application\Model\Article::class,
+    \OxidEsales\MediaLibrary\Application\Model\Article_parent::class
+);
+
