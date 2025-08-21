@@ -611,39 +611,7 @@ class MediaLibraryClass {
             });
 
             // Handle alttext changes
-            $('.dd-media-details-input-alttext', $dialog).on('blur change', function () {
-                var $detailForm = $(this).closest('.dd-media-details-form');
-                var $activeItem = $('.dd-media-item.active', $dialog);
-
-                if ($activeItem.length === 1) {
-                    var mediaId = $activeItem.data('id');
-                    var altText = $(this).val();
-
-                    // Save alttext via AJAX
-                    $.ajax({
-                        type: "POST",
-                        url: actionLink + 'cl=ddoemedia_view&fnc=saveAltText',
-                        data: {
-                            id: mediaId,
-                            alttext: altText
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                // Update the item data
-                                $activeItem.data('alttext', altText);
-                            } else if (response.error) {
-                                ddh.alert(ddh.translate(response.error));
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            ddh.alert('Error saving alt text: ' + error);
-                        }
-                    });
-                }
-            });
-
-            // Handle alttext changes
-            $('.dd-media-details-input-alttext', $dialog).on('blur change', function () {
+            $('.dd-media-details-input-alttext', $dialog).on('change', function () {
                 var $detailForm = $(this).closest('.dd-media-details-form');
                 var $activeItem = $('.dd-media-item.active', $dialog);
 
@@ -762,8 +730,8 @@ class MediaLibraryClass {
                             'filesize': response.filesize,
                             'imagesize': (response.imagesize || null),
                             'thumb': response.thumb,
-                            'alttext': response.alttext // ensure alttext is set
-                        }).attr('data-alttext', response.alttext); // ensure data-alttext is set
+                            'alttext': response.alttext
+                        }).attr('data-alttext', response.alttext);
                         ui._makeItemMovable($('.dd-media-item', file.previewElement));
 
                         $('.dd-media-file-count', $dialog).text(parseInt($('.dd-media-file-count', $dialog).text()) + 1);
