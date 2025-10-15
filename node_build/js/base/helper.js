@@ -82,10 +82,11 @@ export const ddh = {
         }
         document.body.appendChild(modalEl);
 
+        const isNested = document.querySelector('.modal.show');
         const modalInstance = Modal.getOrCreateInstance(modalEl, {
             backdrop: opt.backdrop,
             keyboard: opt.keyboard,
-            focus: true,
+            focus: !isNested,
         });
 
         modalEl.addEventListener("hidden.bs.modal", () => {
