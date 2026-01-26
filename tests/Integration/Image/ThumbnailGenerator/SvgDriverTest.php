@@ -7,9 +7,8 @@
 
 namespace Image\ThumbnailGenerator;
 
-use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
+use Generator;
 use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSizeInterface;
-use OxidEsales\MediaLibrary\Image\ThumbnailGenerator\DefaultDriver;
 use OxidEsales\MediaLibrary\Image\ThumbnailGenerator\SvgDriver;
 use OxidEsales\MediaLibrary\Service\FileSystemServiceInterface;
 use OxidEsales\MediaLibrary\Tests\Integration\IntegrationTestCase;
@@ -64,7 +63,7 @@ class SvgDriverTest extends IntegrationTestCase
         $this->assertSame($expectedName, $result);
     }
 
-    public static function getThumbnailFileNameDataProvider(): \Generator
+    public static function getThumbnailFileNameDataProvider(): Generator
     {
         $fileName = 'SomeFileName.SVG';
         $fileNameHash = md5($fileName);

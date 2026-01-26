@@ -7,6 +7,15 @@
 
 namespace OxidEsales\MediaLibrary\Tests\Integration;
 
+use Generator;
+use OxidEsales\MediaLibrary\Media\Facade\MediaFacadeInterface;
+use OxidEsales\MediaLibrary\Media\Facade\FallbackMediaFacadeDecorator;
+use OxidEsales\MediaLibrary\Compatibility\Facade\MediaIdByPathFacadeInterface;
+use OxidEsales\MediaLibrary\Compatibility\Repository\PathMappingRepositoryInterface;
+use OxidEsales\MediaLibrary\Compatibility\Factory\MediaFileInformationFactoryInterface;
+use OxidEsales\MediaLibrary\Media\Settings\FallbackMediaSettingsInterface;
+use OxidEsales\MediaLibrary\Media\Twig\MediaDataExtension;
+use OxidEsales\MediaLibrary\Media\Twig\MediaDataLogicInterface;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerBuilderFactory;
 use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -19,7 +28,7 @@ class ServiceAvailabilityTest extends IntegrationTestCase
 
     public static function setUpBeforeClass(): void
     {
-        $containerBuilder = (new ContainerBuilderFactory())->create();
+        $containerBuilder = new \OxidEsales\EshopCommunity\Internal\Framework\DIContainer\ContainerBuilder(new \OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext(), (new \OxidEsales\EshopCommunity\Internal\Transition\ShopEvents\ShopIdCalculator(new \OxidEsales\EshopCommunity\Core\UtilsServer()))->getShopId());
         $container = $containerBuilder->getContainer();
         foreach ($container->getDefinitions() as $id => $definition) {
             $definition->setPublic(true);
@@ -50,10 +59,10 @@ class ServiceAvailabilityTest extends IntegrationTestCase
         }
     }
 
-    public static function serviceDecorationProvider(): \Generator
+    public static function serviceDecorationProvider(): Generator
     {
-        yield [\OxidEsales\MediaLibrary\Media\Facade\MediaFacadeInterface::class, [
-            \OxidEsales\MediaLibrary\Media\Facade\FallbackMediaFacadeDecorator::class,
+        yield [MediaFacadeInterface::class, [
+            FallbackMediaFacadeDecorator::class,
         ]];
     }
 
@@ -62,16 +71,16 @@ class ServiceAvailabilityTest extends IntegrationTestCase
     {
         return [
             // Compatibility
-            [\OxidEsales\MediaLibrary\Compatibility\Facade\MediaIdByPathFacadeInterface::class],
-            [\OxidEsales\MediaLibrary\Compatibility\Repository\PathMappingRepositoryInterface::class],
-            [\OxidEsales\MediaLibrary\Compatibility\Factory\MediaFileInformationFactoryInterface::class],
+            [MediaIdByPathFacadeInterface::class],
+            [PathMappingRepositoryInterface::class],
+            [MediaFileInformationFactoryInterface::class],
 
             // Media
-            [\OxidEsales\MediaLibrary\Media\Facade\MediaFacadeInterface::class],
-            [\OxidEsales\MediaLibrary\Media\Settings\FallbackMediaSettingsInterface::class],
+            [MediaFacadeInterface::class],
+            [FallbackMediaSettingsInterface::class],
 
-            [\OxidEsales\MediaLibrary\Media\Twig\MediaDataExtension::class],
-            [\OxidEsales\MediaLibrary\Media\Twig\MediaDataLogicInterface::class],
+            [MediaDataExtension::class],
+            [MediaDataLogicInterface::class],
         ];
     }
 }

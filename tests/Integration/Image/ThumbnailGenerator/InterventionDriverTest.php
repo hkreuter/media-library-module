@@ -7,6 +7,7 @@
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Image\ThumbnailGenerator;
 
+use Generator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use org\bovigo\vfs\vfsStream;
@@ -137,7 +138,7 @@ class InterventionDriverTest extends IntegrationTestCase
         $this->assertSame($expectedResult, $sut->isOriginSupported(strtoupper($filePath)));
     }
 
-    public static function fileTypesDataProvider(): \Generator
+    public static function fileTypesDataProvider(): Generator
     {
         yield "jpg" => [
             'filePath' => 'someFileName.jpg',
@@ -218,7 +219,7 @@ class InterventionDriverTest extends IntegrationTestCase
         $this->assertSame($expectedName, $result);
     }
 
-    public static function getThumbnailFileNameDataProvider(): \Generator
+    public static function getThumbnailFileNameDataProvider(): Generator
     {
         $fileName = 'filename.jpg';
         $fileNameHash = md5($fileName);

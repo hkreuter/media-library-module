@@ -30,7 +30,7 @@ class ResponseTest extends TestCase
             ->with($jsonValue);
 
         $correctHeaderSet = false;
-        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet) {
+        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet): void {
             if (preg_match("@Content-Type:\s?application/json;\s?charset=UTF-8@i", $value)) {
                 $correctHeaderSet = true;
             }
@@ -68,7 +68,7 @@ class ResponseTest extends TestCase
 
         $correctHeaderSet = 0b00;
         $utilsMock->method('setHeader')
-            ->willReturnCallback(function ($value) use (&$correctHeaderSet, $code, $message) {
+            ->willReturnCallback(function ($value) use (&$correctHeaderSet, $code, $message): void {
                 if (preg_match("@Content-Type:\s?application/json;\s?charset=UTF-8@i", $value)) {
                     $correctHeaderSet |= 0b01;
                 }
@@ -93,7 +93,7 @@ class ResponseTest extends TestCase
             ->with($exampleData);
 
         $correctHeaderSet = false;
-        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet) {
+        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet): void {
             if (preg_match("@Content-Type:\s?application/javascript;\s?charset=UTF-8@i", $value)) {
                 $correctHeaderSet = true;
             }
@@ -115,7 +115,7 @@ class ResponseTest extends TestCase
             ->with($exampleData);
 
         $correctHeaderSet = false;
-        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet) {
+        $utilsMock->method('setHeader')->willReturnCallback(function ($value) use (&$correctHeaderSet): void {
             if (preg_match("@Content-Type:\s?text/html;\s?charset=UTF-8@i", $value)) {
                 $correctHeaderSet = true;
             }

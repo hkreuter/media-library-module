@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Service;
 
+use Generator;
 use org\bovigo\vfs\vfsStream;
 use OxidEsales\MediaLibrary\Exception\DirectoryCreationException;
 use OxidEsales\MediaLibrary\Service\FileSystemService;
@@ -30,7 +31,7 @@ class FileSystemServiceTest extends TestCase
         $this->assertTrue(is_dir($path));
     }
 
-    public static function ensureDirectorySuccessCasesDataProvider(): \Generator
+    public static function ensureDirectorySuccessCasesDataProvider(): Generator
     {
         yield ['pathExample' => 'someDirectory'];
         yield ['pathExample' => 'someDirectory/withSubDirectory'];

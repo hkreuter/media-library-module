@@ -9,13 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Language\Controller;
 
+use PHPUnit\Framework\TestCase;
 use OxidEsales\MediaLibrary\Language\Controller\MediaLangJs;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
 use OxidEsales\MediaLibrary\Transput\ResponseInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(MediaLangJs::class)]
-class MediaLangJsTest extends \PHPUnit\Framework\TestCase
+class MediaLangJsTest extends TestCase
 {
     public function testInit(): void
     {

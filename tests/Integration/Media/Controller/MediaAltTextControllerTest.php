@@ -102,7 +102,7 @@ final class MediaAltTextControllerTest extends TestCase
         $mediaAltRepositoryMock->expects($this->exactly(2))
             ->method('saveAltText')
             ->willReturnCallback(
-                function (MediaAltTextInterface $mediaAltText) use ($mediaAltText1Stub, $mediaAltText2Stub) {
+                function (MediaAltTextInterface $mediaAltText) use ($mediaAltText1Stub, $mediaAltText2Stub): void {
                     $this->assertContains($mediaAltText, [$mediaAltText1Stub, $mediaAltText2Stub]);
                 }
             );

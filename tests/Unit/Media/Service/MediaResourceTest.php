@@ -7,8 +7,8 @@
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Image\Service;
 
+use Generator;
 use OxidEsales\Eshop\Core\Config;
-use OxidEsales\MediaLibrary\Media\DataType\Media;
 use OxidEsales\MediaLibrary\Media\Service\MediaResource;
 use OxidEsales\MediaLibrary\Service\NamingServiceInterface;
 use OxidEsales\MediaLibrary\Settings\Service\ModuleSettingsInterface;
@@ -59,7 +59,7 @@ class MediaResourceTest extends TestCase
         );
     }
 
-    public static function getUrlToMediaDataProvider(): \Generator
+    public static function getUrlToMediaDataProvider(): Generator
     {
         yield "no folder no filename" => [
             'folder' => '',
@@ -95,12 +95,12 @@ class MediaResourceTest extends TestCase
         $sut = $this->getSut(
             shopConfig: $shopConfigStub = $this->createStub(Config::class)
         );
-        $shopConfigStub->method('getSslShopUrl')->willReturn(self::EXAMPLE_SHOP_URL);
+        $shopConfigStub->method('getShopUrl')->willReturn(self::EXAMPLE_SHOP_URL);
 
         $this->assertSame($expectedResult, $sut->getUrlToMediaFile($folder, $fileName));
     }
 
-    public static function getUrlToMediaWithAlternativeUrlSetDataProvider(): \Generator
+    public static function getUrlToMediaWithAlternativeUrlSetDataProvider(): Generator
     {
         yield "no folder no filename" => [
             'folder' => '',
@@ -153,7 +153,7 @@ class MediaResourceTest extends TestCase
         $sut = $this->getSut(
             shopConfig: $shopConfigStub = $this->createStub(Config::class)
         );
-        $shopConfigStub->method('getSslShopUrl')->willReturn('someShopUrl');
+        $shopConfigStub->method('getShopUrl')->willReturn('someShopUrl');
 
         $this->assertSame('someShopUrl/' . MediaResource::MEDIA_PATH, $sut->getUrlToMediaFiles());
     }
@@ -163,7 +163,7 @@ class MediaResourceTest extends TestCase
         $sut = $this->getSut(
             shopConfig: $shopConfigStub = $this->createStub(Config::class)
         );
-        $shopConfigStub->method('getSslShopUrl')->willReturn('someShopUrl');
+        $shopConfigStub->method('getShopUrl')->willReturn('someShopUrl');
 
         $this->assertSame(
             'someShopUrl/' . MediaResource::MEDIA_PATH . '/someFolder',

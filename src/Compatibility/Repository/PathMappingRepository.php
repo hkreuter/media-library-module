@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Compatibility\Repository;
 
-use Doctrine\DBAL\ForwardCompatibility\Result;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Compatibility\DTO\MediaFileInformationInterface;
 use OxidEsales\MediaLibrary\Compatibility\Exception\MediaNotFoundByFileInformationException;
@@ -41,8 +40,7 @@ class PathMappingRepository implements PathMappingRepositoryInterface
             $queryBuilder->andWhere('m.DDFOLDERID = ""');
         }
 
-        /** @var Result $result */
-        $result = $queryBuilder->execute();
+        $result = $queryBuilder->executeQuery();
 
         if ($mediaId = $result->fetchOne()) {
             return (string)$mediaId;

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Media\Exception;
 
-class WrongMediaIdGivenException extends \Exception
+use Exception;
+
+class WrongMediaIdGivenException extends Exception
 {
 }

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Image\Exception;
 
-class NoSupportedDriversForSource extends \Exception
+use Exception;
+
+class NoSupportedDriversForSource extends Exception
 {
 }

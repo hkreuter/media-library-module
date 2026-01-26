@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Media\Repository;
 
-use Doctrine\DBAL\ForwardCompatibility\Result;
+use Doctrine\DBAL\Connection;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltText;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltTextInterface;
@@ -18,6 +19,7 @@ class MediaAltRepository implements MediaAltRepositoryInterface
 {
     public function __construct(
         private readonly QueryBuilderFactoryInterface $queryBuilderFactory,
+        private readonly ConnectionProviderInterface $connectionProvider,
     ) {
     }
 
@@ -26,7 +28,7 @@ class MediaAltRepository implements MediaAltRepositoryInterface
         $sql = 'INSERT INTO ddmedia_translations (OXOBJECTID, OXLANGUAGEID, OXALTSHORTTEXT) '
             . 'VALUES (:objectId, :languageId, :altText) '
             . 'ON DUPLICATE KEY UPDATE OXALTSHORTTEXT = :altText, OXTIMESTAMP = CURRENT_TIMESTAMP';
-        $this->queryBuilderFactory->create()->getConnection()->executeStatement(
+        $this->connectionProvider->get()->executeStatement(
             $sql,
             [
                 'objectId' => $mediaAltText->getObjectId(),
@@ -47,8 +49,7 @@ class MediaAltRepository implements MediaAltRepositoryInterface
             ->where('OXOBJECTID = :objectId')
             ->setParameter('objectId', $objectId);
 
-        /** @var Result $result */
-        $result = $qb->execute();
+        $result = $qb->executeQuery();
 
         $altTexts = [];
         while ($row = $result->fetchAssociative()) {
@@ -67,6 +68,6 @@ class MediaAltRepository implements MediaAltRepositoryInterface
         $qb->delete('ddmedia_translations')
             ->where('OXOBJECTID = :mediaId')
             ->setParameter('mediaId', $mediaId)
-            ->execute();
+            ->executeStatement();
     }
 }

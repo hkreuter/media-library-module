@@ -9,11 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Validation\Service;
 
-use OxidEsales\MediaLibrary\Media\DataType\UploadedFileInterface;
+use stdClass;
 use OxidEsales\MediaLibrary\Validation\Exception\ChainInputTypeException;
 use OxidEsales\MediaLibrary\Validation\Exception\ValidationFailedException;
 use OxidEsales\MediaLibrary\Validation\Service\DocumentNameValidatorChain;
-use OxidEsales\MediaLibrary\Validation\Service\UploadedFileValidatorChain;
 use OxidEsales\MediaLibrary\Validation\Validator\FilePathValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +23,7 @@ class FileNameValidatorChainTest extends TestCase
     public function testConstructorDoesNotAcceptWrongType(): void
     {
         $this->expectException(ChainInputTypeException::class);
-        new DocumentNameValidatorChain([new \stdClass()]);
+        new DocumentNameValidatorChain([new stdClass()]);
     }
 
     public function testValidateFileWorksIfNoExceptionsThrown(): void

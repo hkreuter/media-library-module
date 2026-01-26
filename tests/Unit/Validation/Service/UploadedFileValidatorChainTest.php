@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Validation\Service;
 
+use stdClass;
 use OxidEsales\MediaLibrary\Media\DataType\UploadedFileInterface;
 use OxidEsales\MediaLibrary\Validation\Exception\ChainInputTypeException;
 use OxidEsales\MediaLibrary\Validation\Exception\ValidationFailedException;
@@ -23,7 +24,7 @@ class UploadedFileValidatorChainTest extends TestCase
     public function testConstructorDoesNotAcceptWrongType(): void
     {
         $this->expectException(ChainInputTypeException::class);
-        new UploadedFileValidatorChain([new \stdClass()]);
+        new UploadedFileValidatorChain([new stdClass()]);
     }
 
     public function testValidateFileWorksIfNoExceptionsThrown(): void

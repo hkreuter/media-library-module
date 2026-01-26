@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Exception;
 
-class DirectoryCreationException extends \Exception
+use Exception;
+
+class DirectoryCreationException extends Exception
 {
 }

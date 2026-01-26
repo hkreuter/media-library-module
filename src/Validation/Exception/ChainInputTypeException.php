@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Validation\Exception;
 
-class ChainInputTypeException extends \Exception
+use Exception;
+
+class ChainInputTypeException extends Exception
 {
 }

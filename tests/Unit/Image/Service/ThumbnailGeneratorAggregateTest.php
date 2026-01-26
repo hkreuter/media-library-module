@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Image\Service;
 
-use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
+use stdClass;
 use OxidEsales\MediaLibrary\Image\Exception\AggregatorInputType;
 use OxidEsales\MediaLibrary\Image\Exception\NoSupportedDriversForSource;
 use OxidEsales\MediaLibrary\Image\Service\ThumbnailGeneratorAggregate;
@@ -23,7 +23,7 @@ class ThumbnailGeneratorAggregateTest extends TestCase
     public function testConstructorDoesNotAcceptWrongType(): void
     {
         $this->expectException(AggregatorInputType::class);
-        new ThumbnailGeneratorAggregate([new \stdClass()]);
+        new ThumbnailGeneratorAggregate([new stdClass()]);
     }
 
     public function testGetSupportedThumbnailGenerator(): void

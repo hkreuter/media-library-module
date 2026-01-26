@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Media\DataType;
 
+use Generator;
 use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
-use OxidEsales\MediaLibrary\Media\DataType\FrontendMedia;
 use OxidEsales\MediaLibrary\Media\DataType\Media;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -76,7 +76,7 @@ class MediaTest extends TestCase
         $this->assertSame($expectedResult, $sut->isDirectory());
     }
 
-    public static function isDirectoryDataProvider(): \Generator
+    public static function isDirectoryDataProvider(): Generator
     {
         yield "some gif image filetype" => ['fileType' => 'image/gif', 'expectedResult' => false];
         yield "some jpeg image filetype" => ['fileType' => 'image/jpeg', 'expectedResult' => false];

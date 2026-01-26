@@ -145,7 +145,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
                 'DDIMAGESIZE' => 0,
                 'DDFOLDERID' => '',
                 'OXTIMESTAMP' => date("Y-m-d H:i:59")
-            ])->execute();
+            ])->executeStatement();
 
             $qbAlt = $queryBuilderFactory->create();
             $qbAlt->insert('ddmedia_translations')->values([
@@ -156,7 +156,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
                 'OXOBJECTID' => $folderId,
                 'OXLANGUAGEID' => $altTextLanguageId,
                 'OXALTSHORTTEXT' => 'alttext_' . $folderId
-            ])->execute();
+            ])->executeStatement();
         }
 
         for ($i = 1; $i <= $amount; $i++) {
@@ -170,7 +170,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
                 'DDIMAGESIZE' => $i . '00x' . $i . '00.jpg',
                 'DDFOLDERID' => $folderId,
                 'OXTIMESTAMP' => date("Y-m-d H:i:") . $i
-            ])->execute();
+            ])->executeStatement();
 
             $qbAlt = $queryBuilderFactory->create();
             $qbAlt->insert('ddmedia_translations')->values([
@@ -181,7 +181,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
                 'OXOBJECTID' => $oxid,
                 'OXLANGUAGEID' => $altTextLanguageId,
                 'OXALTSHORTTEXT' => 'alttext_' . $oxid
-            ])->execute();
+            ])->executeStatement();
         }
     }
 
@@ -247,7 +247,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $newName = uniqid();
 
@@ -274,7 +274,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $newFolderId = uniqid();
 
@@ -300,7 +300,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $sut = $this->getSut();
         $sut->deleteMedia($idToRemove);
@@ -324,7 +324,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $inDirectoryId = uniqid();
         $queryBuilder->setParameters([
@@ -336,7 +336,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => $idToRemove,
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $notInDirectoryId = uniqid();
         $queryBuilder->setParameters([
@@ -348,7 +348,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $sut = $this->getSut();
         $sut->deleteMedia($idToRemove);
@@ -384,7 +384,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => '100x100',
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:s")
-        ])->execute();
+        ])->executeStatement();
 
         $altText1 = uniqid();
         $altText2 = uniqid();
@@ -442,7 +442,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => '',
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:s")
-        ])->execute();
+        ])->executeStatement();
 
         // Add media inside folder
         foreach ($mediaIds as $i => $mediaId) {
@@ -455,7 +455,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
                 'DDIMAGESIZE' => '100x100',
                 'DDFOLDERID' => $folderId,
                 'OXTIMESTAMP' => date("Y-m-d H:i:s")
-            ])->execute();
+            ])->executeStatement();
         }
 
         // Add media outside folder
@@ -468,7 +468,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => '300x300',
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:s")
-        ])->execute();
+        ])->executeStatement();
 
         // Insert alt texts
         $ids = array_merge([$folderId], $mediaIds, [$outsideId]);

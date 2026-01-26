@@ -4,7 +4,12 @@
  * Copyright © OXID eSales AG. All rights reserved.
  * See LICENSE file for license details.
  */
-
+use OxidEsales\Eshop\Core\ViewConfig;
+use OxidEsales\Eshop\Core\Language;
+use OxidEsales\MediaLibrary\Language\Core\LanguageExtension;
+use OxidEsales\MediaLibrary\Language\Controller\MediaLangJs;
+use OxidEsales\MediaLibrary\Application\Controller\Admin\MediaController;
+use OxidEsales\MediaLibrary\Application\Controller\Admin\MediaWrapperController;
 use OxidEsales\MediaLibrary\Media\Settings\FallbackMediaSettings;
 use OxidEsales\MediaLibrary\Settings\Service\ModuleSettings;
 
@@ -30,16 +35,16 @@ $aModule = [
     'email'       => 'info@oxid-esales.com',
     'extend'      => [
         // Core
-        \OxidEsales\Eshop\Core\ViewConfig::class => \OxidEsales\MediaLibrary\Transition\Core\ViewConfig::class,
-        \OxidEsales\Eshop\Core\Language::class   => \OxidEsales\MediaLibrary\Language\Core\LanguageExtension::class,
+        ViewConfig::class => \OxidEsales\MediaLibrary\Transition\Core\ViewConfig::class,
+        Language::class   => LanguageExtension::class,
     ],
     'controllers' => [
         // Lang
-        'ddoelangjs'        => \OxidEsales\MediaLibrary\Language\Controller\MediaLangJs::class,
+        'ddoelangjs'        => MediaLangJs::class,
 
         // Admin Controller
-        'ddoemedia_view'    => \OxidEsales\MediaLibrary\Application\Controller\Admin\MediaController::class,
-        'ddoemedia_wrapper' => \OxidEsales\MediaLibrary\Application\Controller\Admin\MediaWrapperController::class,
+        'ddoemedia_view'    => MediaController::class,
+        'ddoemedia_wrapper' => MediaWrapperController::class,
 
     ],
     'templates'   => [

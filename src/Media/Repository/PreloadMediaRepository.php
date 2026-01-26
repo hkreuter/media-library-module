@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Media\Repository;
 
+use PDO;
 use Doctrine\DBAL\Connection;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
 use OxidEsales\MediaLibrary\Media\DataType\MediaInterface;
@@ -66,8 +67,8 @@ class PreloadMediaRepository implements PreloadMediaRepositoryInterface
             'OXIDLIST' => $this->idsToPreload
         ];
         $types = [
-            'OXLANGUAGEID' => \PDO::PARAM_INT,
-            'OXIDLIST' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            'OXLANGUAGEID' => PDO::PARAM_INT,
+            'OXIDLIST' => \Doctrine\DBAL\ArrayParameterType::STRING
         ];
         $result = $this->connection->executeQuery(
             sql: $sql,

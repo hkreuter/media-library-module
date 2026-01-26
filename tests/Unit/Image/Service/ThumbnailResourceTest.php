@@ -7,6 +7,7 @@
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Image\Service;
 
+use Generator;
 use OxidEsales\MediaLibrary\Image\Service\ThumbnailResource;
 use OxidEsales\MediaLibrary\Media\Service\MediaResourceInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -33,7 +34,7 @@ class ThumbnailResourceTest extends TestCase
         $this->assertSame($sut::THUMBNAIL_DEFAULT_SIZE, $size->getHeight());
     }
 
-    public static function getPathToThumbnailFilesDataProvider(): \Generator
+    public static function getPathToThumbnailFilesDataProvider(): Generator
     {
         $folder = uniqid();
         yield 'specific folder' => [

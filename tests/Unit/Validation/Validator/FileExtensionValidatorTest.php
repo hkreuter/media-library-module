@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Validation\Validator;
 
+use Generator;
 use OxidEsales\MediaLibrary\Media\DataType\FilePathInterface;
 use OxidEsales\MediaLibrary\Settings\Service\ModuleSettingsInterface;
 use OxidEsales\MediaLibrary\Validation\Exception\ValidationFailedException;
@@ -32,7 +33,7 @@ class FileExtensionValidatorTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    public static function goodFileNamesDataProvider(): \Generator
+    public static function goodFileNamesDataProvider(): Generator
     {
         yield "regular case" => [
             'fileName' => 'someImage.gif'
@@ -56,7 +57,7 @@ class FileExtensionValidatorTest extends TestCase
         $sut->validateFile($filePathStub);
     }
 
-    public static function wrongFileNamesDataProvider(): \Generator
+    public static function wrongFileNamesDataProvider(): Generator
     {
         yield "not supported extension" => [
             'fileName' => 'someImage.xxx'

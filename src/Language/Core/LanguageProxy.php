@@ -9,12 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Language\Core;
 
+use OxidEsales\Eshop\Core\Language;
+
 class LanguageProxy implements LanguageInterface
 {
     /** @var LanguageExtension $language */
     private $language;
 
-    public function __construct(\OxidEsales\Eshop\Core\Language $language)
+    public function __construct(Language $language)
     {
         /** @var LanguageExtension $language */
         $this->language = $language;

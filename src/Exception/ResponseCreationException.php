@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Exception;
 
-class ResponseCreationException extends \Exception
+use Exception;
+
+class ResponseCreationException extends Exception
 {
 }

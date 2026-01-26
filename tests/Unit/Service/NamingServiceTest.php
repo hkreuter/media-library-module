@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Service;
 
+use Generator;
 use org\bovigo\vfs\vfsStream;
 use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapterInterface;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
@@ -52,7 +53,7 @@ class NamingServiceTest extends TestCase
         $this->assertSame($expectedResult, $sut->sanitizeFilename($filename));
     }
 
-    public static function sanitizeFilenameDataProvider(): \Generator
+    public static function sanitizeFilenameDataProvider(): Generator
     {
         yield "no extension" => ['filename' => 'soMexc', 'expectedResult' => 'soMeyb'];
         yield "multiple dots replaced" => ['filename' => 'somExc.!^xc.giF', 'expectedResult' => 'somEyb.-yb.giF'];
@@ -66,7 +67,7 @@ class NamingServiceTest extends TestCase
         $this->assertSame($expectation, $sut->getUniqueFilename($filename));
     }
 
-    public static function getUniqueFilenameDataProvider(): \Generator
+    public static function getUniqueFilenameDataProvider(): Generator
     {
         yield 'not existing file no directory' => [
             'filename' => 'vfs://root/someSimpleFile.ext',

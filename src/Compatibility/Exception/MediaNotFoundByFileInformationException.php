@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Compatibility\Exception;
 
-class MediaNotFoundByFileInformationException extends \Exception
+use Exception;
+
+class MediaNotFoundByFileInformationException extends Exception
 {
 }

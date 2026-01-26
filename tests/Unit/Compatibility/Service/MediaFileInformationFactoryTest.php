@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Compatibility\Service;
 
+use Generator;
 use OxidEsales\MediaLibrary\Compatibility\DTO\MediaFileInformation;
 use OxidEsales\MediaLibrary\Compatibility\DTO\MediaFileInformationInterface;
 use OxidEsales\MediaLibrary\Compatibility\Exception\UnknownPathFormatException;
@@ -30,7 +31,7 @@ class MediaFileInformationFactoryTest extends TestCase
         );
     }
 
-    public static function pathDataProvider(): \Generator
+    public static function pathDataProvider(): Generator
     {
         yield 'path with file name only' => [
             'path' => 'test.jpg',
@@ -88,7 +89,7 @@ class MediaFileInformationFactoryTest extends TestCase
         $sut->fromPath($path);
     }
 
-    public static function badPathDataProvider(): \Generator
+    public static function badPathDataProvider(): Generator
     {
         yield 'empty path' => [
             'path' => '',

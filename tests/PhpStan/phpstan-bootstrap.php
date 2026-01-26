@@ -7,12 +7,17 @@
 
 declare(strict_types=1);
 
+use OxidEsales\Eshop\Core\Language;
+use OxidEsales\MediaLibrary\Language\Core\LanguageExtension_parent;
+use OxidEsales\Eshop\Core\ViewConfig;
+use OxidEsales\MediaLibrary\Transition\Core\ViewConfig_parent;
+
 class_alias(
-    \OxidEsales\Eshop\Core\Language::class,
-    \OxidEsales\MediaLibrary\Language\Core\LanguageExtension_parent::class
+    Language::class,
+    LanguageExtension_parent::class
 );
 
 class_alias(
-    \OxidEsales\Eshop\Core\ViewConfig::class,
-    \OxidEsales\MediaLibrary\Transition\Core\ViewConfig_parent::class
+    ViewConfig::class,
+    ViewConfig_parent::class
 );

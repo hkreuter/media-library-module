@@ -9,13 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Tests\Integration\IntegrationTestCase;
 
 class RepositoryIntegrationTestCase extends IntegrationTestCase
 {
-    protected function getAddItemQueryBuilder(): \Doctrine\DBAL\Query\QueryBuilder
+    protected function getAddItemQueryBuilder(): QueryBuilder
     {
         $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();

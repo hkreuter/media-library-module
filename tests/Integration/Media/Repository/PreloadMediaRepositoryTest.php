@@ -49,7 +49,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         $queryBuilder->delete("ddmedia")
             ->where('OXID = :OXID')
             ->setParameter('OXID', $id)
-            ->execute();
+            ->executeStatement();
 
         $media = $sut->getMediaById($id);
         $this->assertSame($id, $media->getOxid());
@@ -89,7 +89,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         $queryBuilder->delete("ddmedia")
             ->where('OXID = :OXID')
             ->setParameter('OXID', $id)
-            ->execute();
+            ->executeStatement();
 
         $this->expectException(MediaNotFoundException::class);
         $sut->getMediaById($id);
@@ -113,9 +113,9 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->delete("ddmedia")->where('OXID = :OXID');
-        $queryBuilder->setParameter('OXID', $id1)->execute();
-        $queryBuilder->setParameter('OXID', $id2)->execute();
-        $queryBuilder->setParameter('OXID', $id3)->execute();
+        $queryBuilder->setParameter('OXID', $id1)->executeStatement();
+        $queryBuilder->setParameter('OXID', $id2)->executeStatement();
+        $queryBuilder->setParameter('OXID', $id3)->executeStatement();
 
         $media2 = $sut->getMediaById($id2);
         $this->assertSame($id2, $media2->getOxid());
@@ -171,7 +171,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         return $id;
     }
@@ -192,7 +192,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
             'DDIMAGESIZE' => 0,
             'DDFOLDERID' => '',
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
-        ])->execute();
+        ])->executeStatement();
 
         $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
 
@@ -205,7 +205,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
             'OXOBJECTID' => $id,
             'OXLANGUAGEID' => $languageId,
             'OXALTSHORTTEXT' => $altTextForLanguage
-        ])->execute();
+        ])->executeStatement();
 
         $otherLanguageId = $languageId + 1;
         $qbAlt2 = $queryBuilderFactory->create();
@@ -217,7 +217,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
             'OXOBJECTID' => $id,
             'OXLANGUAGEID' => $otherLanguageId,
             'OXALTSHORTTEXT' => $altTextForOtherLanguage
-        ])->execute();
+        ])->executeStatement();
     }
 
     private function getSut(?LanguageInterface $language = null): PreloadMediaRepositoryInterface

@@ -7,8 +7,10 @@
 
 namespace OxidEsales\MediaLibrary\Language\Core;
 
+use OxidEsales\Eshop\Core\Language;
+
 /**
- * @mixin \OxidEsales\Eshop\Core\Language
+ * @mixin Language
  */
 class LanguageExtension extends LanguageExtension_parent
 {

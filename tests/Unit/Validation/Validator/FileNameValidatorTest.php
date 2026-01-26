@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Unit\Validation\Validator;
 
+use Generator;
 use OxidEsales\MediaLibrary\Media\DataType\FilePath;
 use OxidEsales\MediaLibrary\Validation\Exception\ValidationFailedException;
 use OxidEsales\MediaLibrary\Validation\Validator\FileNameValidator;
@@ -31,7 +32,7 @@ class FileNameValidatorTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    public static function goodFileNamesDataProvider(): \Generator
+    public static function goodFileNamesDataProvider(): Generator
     {
         yield "regular file name" => [
             'baseName' => uniqid(),
@@ -39,7 +40,7 @@ class FileNameValidatorTest extends TestCase
         ];
     }
 
-    public static function badFileNamesDataProvider(): \Generator
+    public static function badFileNamesDataProvider(): Generator
     {
         yield "empty" => [
             'fileName' => ''

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Image\Exception;
 
-class AggregatorInputType extends \Exception
+use Exception;
+
+class AggregatorInputType extends Exception
 {
 }
