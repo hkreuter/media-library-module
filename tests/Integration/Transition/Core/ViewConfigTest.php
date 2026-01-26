@@ -33,7 +33,13 @@ class ViewConfigTest extends IntegrationTestCase
     public function testFormJsFileUrl(): void
     {
         $config = Registry::getConfig();
-        $file = tempnam($config->getConfigParam('sShopDir'), 'test_');
+        $shopDir = $config->getConfigParam('sShopDir');
+
+        if (empty($shopDir)) {
+            $this->markTestSkipped('sShopDir not configured in test environment');
+        }
+
+        $file = tempnam($shopDir, 'test_');
         file_put_contents($file, 'dummy content');
         $mtime = filemtime($file);
 

@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Tests\Integration\IntegrationTestCase;
 
@@ -18,7 +17,7 @@ class RepositoryIntegrationTestCase extends IntegrationTestCase
 {
     protected function getAddItemQueryBuilder(): QueryBuilder
     {
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->insert("ddmedia")->values([
             'OXID' => ':OXID',

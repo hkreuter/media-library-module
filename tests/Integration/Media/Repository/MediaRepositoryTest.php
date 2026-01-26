@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
-use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
@@ -95,10 +94,12 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     public function getShopFolderMediaInRootWithFolderPresent(): void
     {
         $expectedItems = 4;
-        $firstListItemId = 3;
 
-        $this->createTestItems(7, 'someFolder');
-        $this->createTestItems(3, '');
+        $folderName = uniqid('folder_');
+        $rootPrefix = uniqid('root_');
+
+        $this->createTestItemsWithPrefix(7, $folderName, '');
+        $this->createTestItemsWithPrefix(3, '', $rootPrefix);
 
         $sut = $this->getSutForShop(2);
 
@@ -108,15 +109,72 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
 
         $oneItem = current($result);
         $this->assertInstanceOf(Media::class, $oneItem);
-        $this->assertSame('someFolder', $oneItem->getOxid());
+        $this->assertSame($folderName, $oneItem->getOxid());
         next($result);
 
+        $itemIndex = 0;
         foreach ($result as $key => $oneItem) {
             if (!$key) {
                 continue;
             }
+            $itemIndex++;
             $this->assertInstanceOf(Media::class, $oneItem);
-            $this->assertSame('example' . ($firstListItemId - $key + 1), $oneItem->getOxid());
+            $this->assertSame($rootPrefix . 'example' . (3 - $itemIndex + 1), $oneItem->getOxid());
+        }
+    }
+
+    private function createTestItemsWithPrefix(int $amount, string $folderId, string $oxidPrefix, int $altTextLanguageId = 1): void
+    {
+        $queryBuilder = $this->getAddItemQueryBuilder();
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
+
+        if ($folderId) {
+            $queryBuilder->setParameters([
+                'OXID' => $folderId,
+                'OXSHOPID' => 2,
+                'DDFILENAME' => $folderId . 'Filename',
+                'DDFILESIZE' => 0,
+                'DDFILETYPE' => 'directory',
+                'DDIMAGESIZE' => 0,
+                'DDFOLDERID' => '',
+                'OXTIMESTAMP' => date("Y-m-d H:i:59")
+            ])->executeStatement();
+
+            $qbAlt = $queryBuilderFactory->create();
+            $qbAlt->insert('ddmedia_translations')->values([
+                'OXOBJECTID' => ':OXOBJECTID',
+                'OXLANGUAGEID' => ':OXLANGUAGEID',
+                'OXALTSHORTTEXT' => ':OXALTSHORTTEXT',
+            ])->setParameters([
+                'OXOBJECTID' => $folderId,
+                'OXLANGUAGEID' => $altTextLanguageId,
+                'OXALTSHORTTEXT' => 'alttext_' . $folderId
+            ])->executeStatement();
+        }
+
+        for ($i = 1; $i <= $amount; $i++) {
+            $oxid = $oxidPrefix . $folderId . 'example' . $i;
+            $queryBuilder->setParameters([
+                'OXID' => $oxid,
+                'OXSHOPID' => 2,
+                'DDFILENAME' => 'filename' . $i . '.jpg',
+                'DDFILESIZE' => $i * 10,
+                'DDFILETYPE' => 'image/gif',
+                'DDIMAGESIZE' => $i . '00x' . $i . '00.jpg',
+                'DDFOLDERID' => $folderId,
+                'OXTIMESTAMP' => date("Y-m-d H:i:") . $i
+            ])->executeStatement();
+
+            $qbAlt = $queryBuilderFactory->create();
+            $qbAlt->insert('ddmedia_translations')->values([
+                'OXOBJECTID' => ':OXOBJECTID',
+                'OXLANGUAGEID' => ':OXLANGUAGEID',
+                'OXALTSHORTTEXT' => ':OXALTSHORTTEXT',
+            ])->setParameters([
+                'OXOBJECTID' => $oxid,
+                'OXLANGUAGEID' => $altTextLanguageId,
+                'OXALTSHORTTEXT' => 'alttext_' . $oxid
+            ])->executeStatement();
         }
     }
 
@@ -133,7 +191,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     private function createTestItems(int $amount, string $folderId, int $altTextLanguageId = 1): void
     {
         $queryBuilder = $this->getAddItemQueryBuilder();
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
 
         if ($folderId) {
             $queryBuilder->setParameters([
@@ -371,7 +429,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     #[Test]
     public function deleteMediaRemovesAltTextTranslations(): void
     {
-        $connection = ContainerFacade::get(ConnectionFactoryInterface::class)->create();
+        $connection = $this->get(ConnectionFactoryInterface::class)->create();
         $mediaId = uniqid();
 
         $queryBuilder = $this->getAddItemQueryBuilder();
@@ -427,7 +485,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     #[Test]
     public function deleteFolderRemovesAltTextForAllMediaInFolder(): void
     {
-        $connection = ContainerFacade::get(ConnectionFactoryInterface::class)->create();
+        $connection = $this->get(ConnectionFactoryInterface::class)->create();
         $folderId = uniqid();
         $mediaIds = [uniqid(), uniqid()];
         $outsideId = uniqid();

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
-use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
@@ -44,7 +43,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         $media = $sut->getMediaById($id);
         $this->assertSame($id, $media->getOxid());
 
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->delete("ddmedia")
             ->where('OXID = :OXID')
@@ -84,7 +83,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         // register the media object for preload, but do not load it
         $sut->registerForPreload($id);
 
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->delete("ddmedia")
             ->where('OXID = :OXID')
@@ -110,7 +109,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
         $media1 = $sut->getMediaById($id1);
         $this->assertSame($id1, $media1->getOxid());
 
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
         $queryBuilder = $queryBuilderFactory->create();
         $queryBuilder->delete("ddmedia")->where('OXID = :OXID');
         $queryBuilder->setParameter('OXID', $id1)->executeStatement();
@@ -194,7 +193,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
             'OXTIMESTAMP' => date("Y-m-d H:i:59")
         ])->executeStatement();
 
-        $queryBuilderFactory = ContainerFacade::get(QueryBuilderFactoryInterface::class);
+        $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
 
         $qbAlt = $queryBuilderFactory->create();
         $qbAlt->insert('ddmedia_translations')->values([
@@ -223,7 +222,7 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
     private function getSut(?LanguageInterface $language = null): PreloadMediaRepositoryInterface
     {
         return new PreloadMediaRepository(
-            connection: ContainerFacade::get(ConnectionFactoryInterface::class)->create(),
+            connection: $this->get(ConnectionFactoryInterface::class)->create(),
             mediaFactory: $this->get(MediaFactoryInterface::class),
             language: $language ?? $this->get(LanguageInterface::class),
         );

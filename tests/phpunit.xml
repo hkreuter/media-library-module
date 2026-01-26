@@ -15,7 +15,8 @@
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerDeprecations="true"
-         colors="true">
+         colors="true"
+         bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="Unit">
             <directory>Unit/</directory>
