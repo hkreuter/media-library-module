@@ -9,8 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Media\Repository;
 
-use Doctrine\DBAL\Connection;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltText;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltTextInterface;
@@ -19,7 +18,7 @@ class MediaAltRepository implements MediaAltRepositoryInterface
 {
     public function __construct(
         private readonly QueryBuilderFactoryInterface $queryBuilderFactory,
-        private readonly ConnectionProviderInterface $connectionProvider,
+        private readonly ConnectionFactoryInterface $connectionFactory,
     ) {
     }
 
@@ -28,7 +27,7 @@ class MediaAltRepository implements MediaAltRepositoryInterface
         $sql = 'INSERT INTO ddmedia_translations (OXOBJECTID, OXLANGUAGEID, OXALTSHORTTEXT) '
             . 'VALUES (:objectId, :languageId, :altText) '
             . 'ON DUPLICATE KEY UPDATE OXALTSHORTTEXT = :altText, OXTIMESTAMP = CURRENT_TIMESTAMP';
-        $this->connectionProvider->get()->executeStatement(
+        $this->connectionFactory->create()->executeStatement(
             $sql,
             [
                 'objectId' => $mediaAltText->getObjectId(),
