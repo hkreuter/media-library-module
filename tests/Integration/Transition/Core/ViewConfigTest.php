@@ -36,6 +36,8 @@ class ViewConfigTest extends IntegrationTestCase
         $shopDir = $config->getConfigParam('sShopDir');
 
         if (empty($shopDir)) {
+            // This test requires sShopDir to be configured because formJsFileUrl()
+            // resolves file paths relative to the shop directory to determine mtime
             $this->markTestSkipped('sShopDir not configured in test environment');
         }
 

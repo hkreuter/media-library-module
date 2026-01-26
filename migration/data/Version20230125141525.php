@@ -19,17 +19,20 @@ final class Version20230125141525 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $platform = $this->connection->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
+        // Check columns using direct SQL instead of schema introspection
+        // to avoid DBAL 4.0 issues with ENUM columns in other tables
+        $columns = $this->connection->executeQuery(
+            "SHOW COLUMNS FROM `ddmedia`"
+        )->fetchAllAssociative();
 
-        $mediaTable = $schema->getTable('ddmedia');
+        $columnNames = array_column($columns, 'Field');
 
-        if (!$mediaTable->hasColumn('DDIMAGESIZE')) {
-            $this->addSql('ALTER TABLE  `ddmedia` ADD  `DDIMAGESIZE` VARCHAR( 100 ) AFTER  `DDTHUMB`;');
+        if (!in_array('DDIMAGESIZE', $columnNames)) {
+            $this->addSql('ALTER TABLE `ddmedia` ADD `DDIMAGESIZE` VARCHAR(100) AFTER `DDTHUMB`;');
         }
 
-        if (!$mediaTable->hasColumn('OXSHOPID')) {
-            $this->addSql('ALTER TABLE  `ddmedia` ADD `OXSHOPID` INT(10) UNSIGNED NOT NULL AFTER `OXID`;');
+        if (!in_array('OXSHOPID', $columnNames)) {
+            $this->addSql('ALTER TABLE `ddmedia` ADD `OXSHOPID` INT(10) UNSIGNED NOT NULL AFTER `OXID`;');
         }
     }
 

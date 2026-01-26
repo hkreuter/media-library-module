@@ -42,4 +42,16 @@ class AcceptanceTester extends Actor
         $admin = Fixtures::get('admin');
         return $adminLoginPage->login($admin['email'], $admin['password']);
     }
+
+    /**
+     * Wait for Ajax requests to complete.
+     * This method provides backward compatibility with the old codeception-modules API.
+     */
+    public function waitForAjax(int $timeout = 10): void
+    {
+        $this->waitForJS(
+            'return (typeof jQuery === "undefined" || jQuery.active === 0)',
+            $timeout
+        );
+    }
 }

@@ -17,8 +17,13 @@ final class Version20250910121000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-        if (!$schema->hasTable('ddmedia_translations')) {
+        // Check table existence using direct SQL instead of schema introspection
+        // to avoid DBAL 4.0 issues with ENUM columns in other tables
+        $tableExists = $this->connection->executeQuery(
+            "SHOW TABLES LIKE 'ddmedia_translations'"
+        )->fetchOne();
+
+        if (!$tableExists) {
             $this->addSql("CREATE TABLE `ddmedia_translations` (
                 `OXOBJECTID` char(32) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL COMMENT 'object identifier aka oxid',
                 `OXLANGUAGEID` int NOT NULL DEFAULT 0,

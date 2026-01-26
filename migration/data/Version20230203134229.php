@@ -19,14 +19,17 @@ final class Version20230203134229 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $platform = $this->connection->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
+        // Check columns using direct SQL instead of schema introspection
+        // to avoid DBAL 4.0 issues with ENUM columns in other tables
+        $columns = $this->connection->executeQuery(
+            "SHOW COLUMNS FROM `ddmedia`"
+        )->fetchAllAssociative();
 
-        $mediaTable = $schema->getTable('ddmedia');
+        $columnNames = array_column($columns, 'Field');
 
-        if (!$mediaTable->hasColumn('DDFOLDERID')) {
+        if (!in_array('DDFOLDERID', $columnNames)) {
             $this->addSql(
-                "ALTER TABLE  `ddmedia` ADD  `DDFOLDERID` CHAR( 32 ) NOT NULL DEFAULT '' AFTER `DDIMAGESIZE`"
+                "ALTER TABLE `ddmedia` ADD `DDFOLDERID` CHAR(32) NOT NULL DEFAULT '' AFTER `DDIMAGESIZE`"
             );
         }
     }

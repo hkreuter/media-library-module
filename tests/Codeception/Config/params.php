@@ -7,8 +7,7 @@
 
 declare(strict_types=1);
 
-use OxidEsales\Codeception\Module\Database\DatabaseDefaultsFileGenerator;
-use OxidEsales\Facts\Config\ConfigFile;
+use OxidEsales\Codeception\Module\Database;
 use OxidEsales\Facts\Facts;
 
 if ($shopRootPath = getenv('SHOP_ROOT_PATH')){
@@ -87,9 +86,11 @@ function getShopTestPath()
 function getMysqlConfigPath()
 {
     $facts = new Facts();
-    $configFilePath = $facts->getSourcePath() . '/config.inc.php';
-    $configFile = new ConfigFile($configFilePath);
-    $generator = new DatabaseDefaultsFileGenerator($configFile);
 
-    return $generator->generate();
+    return Database::generateStartupOptionsFile(
+        $facts->getDatabaseUserName(),
+        $facts->getDatabasePassword(),
+        $facts->getDatabaseHost(),
+        (int)$facts->getDatabasePort()
+    );
 }
