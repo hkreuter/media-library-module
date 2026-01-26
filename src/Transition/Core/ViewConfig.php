@@ -32,9 +32,10 @@ class ViewConfig extends ViewConfig_parent
     public function formJsFileUrl(string $fileUrl): string
     {
         $config = Registry::getConfig();
+        $shopDir = $config->getConfigParam('sShopDir') ?? '';
         $filePath = str_replace(
-            rtrim($config->getCurrentShopUrl(false), '/'),
-            rtrim($config->getConfigParam('sShopDir'), '/'),
+            rtrim($config->getCurrentShopUrl(false) ?? '', '/'),
+            rtrim($shopDir, '/'),
             $fileUrl
         );
 

@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
@@ -198,13 +198,13 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
 
     private function getSut(
         ?ContextInterface $context = null,
-        ?ConnectionProviderInterface $connectionProvider = null,
+        ?ConnectionFactoryInterface $connectionFactory = null,
         ?MediaFactoryInterface $mediaFactory = null,
         ?LanguageInterface $language = null,
         ?MediaAltRepositoryInterface $mediaAltRepository = null
     ): MediaRepository {
         return new MediaRepository(
-            connectionProvider: $connectionProvider ?? $this->get(ConnectionProviderInterface::class),
+            connectionFactory: $connectionFactory ?? $this->get(ConnectionFactoryInterface::class),
             context: $context ?? $this->get(ContextInterface::class),
             mediaFactory: $mediaFactory ?? $this->get(MediaFactoryInterface::class),
             language: $language ?? $this->get(LanguageInterface::class),
@@ -371,7 +371,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     #[Test]
     public function deleteMediaRemovesAltTextTranslations(): void
     {
-        $connection = ContainerFacade::get(ConnectionProviderInterface::class)->get();
+        $connection = ContainerFacade::get(ConnectionFactoryInterface::class)->create();
         $mediaId = uniqid();
 
         $queryBuilder = $this->getAddItemQueryBuilder();
@@ -427,7 +427,7 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     #[Test]
     public function deleteFolderRemovesAltTextForAllMediaInFolder(): void
     {
-        $connection = ContainerFacade::get(ConnectionProviderInterface::class)->get();
+        $connection = ContainerFacade::get(ConnectionFactoryInterface::class)->create();
         $folderId = uniqid();
         $mediaIds = [uniqid(), uniqid()];
         $outsideId = uniqid();

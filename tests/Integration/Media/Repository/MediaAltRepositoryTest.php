@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltTextInterface;
@@ -231,7 +232,8 @@ class MediaAltRepositoryTest extends RepositoryIntegrationTestCase
         ?QueryBuilderFactoryInterface $queryBuilderFactory = null
     ): MediaAltRepository {
         return new MediaAltRepository(
-            $queryBuilderFactory ?? ContainerFacade::get(QueryBuilderFactoryInterface::class)
+            $queryBuilderFactory ?? ContainerFacade::get(QueryBuilderFactoryInterface::class),
+            ContainerFacade::get(ConnectionFactoryInterface::class)
         );
     }
 }

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Controller;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Request\RequestInterface;
+use Symfony\Component\HttpFoundation\Request;
 use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapterInterface;
 use OxidEsales\MediaLibrary\Media\Controller\MediaAltTextController;
 use OxidEsales\MediaLibrary\Media\DataType\MediaAltTextInterface;
@@ -28,7 +28,7 @@ final class MediaAltTextControllerTest extends TestCase
     public function getAltTexts(): void
     {
         $mediaAltRepositoryMock = $this->createMock(MediaAltRepositoryInterface::class);
-        $requestMock = $this->createMock(RequestInterface::class);
+        $requestMock = $this->createMock(Request::class);
         $responseSpy = $this->createMock(ResponseInterface::class);
 
         $objectId = uniqid();
@@ -69,7 +69,7 @@ final class MediaAltTextControllerTest extends TestCase
     {
         $mediaAltRepositoryMock = $this->createMock(MediaAltRepositoryInterface::class);
         $mediaAltTextFactoryStub = $this->createMock(MediaAltTextFactoryInterface::class);
-        $requestStub = $this->createMock(RequestInterface::class);
+        $requestStub = $this->createMock(Request::class);
         $responseMock = $this->createMock(ResponseInterface::class);
         $shopAdapterMock = $this->createMock(ShopAdapterInterface::class);
         $objectId = uniqid();
@@ -135,7 +135,7 @@ final class MediaAltTextControllerTest extends TestCase
         return new MediaAltTextController(
             $repository ?? $this->createStub(MediaAltRepositoryInterface::class),
             $factory ?? $this->createStub(MediaAltTextFactoryInterface::class),
-            $request ?? $this->createStub(RequestInterface::class),
+            $request ?? $this->createStub(Request::class),
             $response ?? $this->createStub(ResponseInterface::class),
             $shopAdapter ?? $this->createStub(ShopAdapterInterface::class)
         );
