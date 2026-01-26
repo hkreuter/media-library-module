@@ -9,6 +9,7 @@ namespace OxidEsales\MediaLibrary\Tests\Unit\Image\Service;
 
 use Generator;
 use OxidEsales\Eshop\Core\Config;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use OxidEsales\MediaLibrary\Media\Service\MediaResource;
 use OxidEsales\MediaLibrary\Service\NamingServiceInterface;
 use OxidEsales\MediaLibrary\Settings\Service\ModuleSettingsInterface;
@@ -23,10 +24,10 @@ class MediaResourceTest extends TestCase
 
     public function testGetPathToMediaFiles(): void
     {
-        $sut = $this->getSut(
-            shopConfig: $shopConfigStub = $this->createStub(Config::class)
-        );
-        $shopConfigStub->method('getConfigParam')->with('sShopDir')->willReturn('someShopDir');
+        $basicContext = $this->createStub(BasicContextInterface::class);
+        $basicContext->method('getSourcePath')->willReturn('someShopDir');
+
+        $sut = $this->getSut(basicContext: $basicContext);
 
         $this->assertSame('someShopDir/' . MediaResource::MEDIA_PATH, $sut->getPathToMediaFiles());
     }
@@ -35,22 +36,22 @@ class MediaResourceTest extends TestCase
         Config $shopConfig = null,
         NamingServiceInterface $namingService = null,
         ModuleSettingsInterface $moduleSettings = null,
+        BasicContextInterface $basicContext = null,
     ) {
         return new MediaResource(
             shopConfig: $shopConfig ?? $this->createStub(Config::class),
             namingService: $namingService ?? $this->createStub(NamingServiceInterface::class),
-            moduleSettings: $moduleSettings ?? $this->createStub(
-                ModuleSettingsInterface::class
-            ),
+            moduleSettings: $moduleSettings ?? $this->createStub(ModuleSettingsInterface::class),
+            basicContext: $basicContext ?? $this->createStub(BasicContextInterface::class),
         );
     }
 
     public function testGetPathToMediaFilesWithSubdirectory(): void
     {
-        $sut = $this->getSut(
-            shopConfig: $shopConfigStub = $this->createStub(Config::class)
-        );
-        $shopConfigStub->method('getConfigParam')->with('sShopDir')->willReturn('someShopDir');
+        $basicContext = $this->createStub(BasicContextInterface::class);
+        $basicContext->method('getSourcePath')->willReturn('someShopDir');
+
+        $sut = $this->getSut(basicContext: $basicContext);
 
         $subDirectory = '/some/sub/directory';
         $this->assertSame(

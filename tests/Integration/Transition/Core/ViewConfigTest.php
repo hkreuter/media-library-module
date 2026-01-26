@@ -8,6 +8,7 @@
 namespace OxidEsales\MediaLibrary\Tests\Integration\Transition\Core;
 
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use OxidEsales\MediaLibrary\Media\Service\MediaResourceInterface;
 use OxidEsales\MediaLibrary\Tests\Integration\IntegrationTestCase;
 use OxidEsales\MediaLibrary\Transition\Core\ViewConfig;
@@ -33,13 +34,8 @@ class ViewConfigTest extends IntegrationTestCase
     public function testFormJsFileUrl(): void
     {
         $config = Registry::getConfig();
-        $shopDir = $config->getConfigParam('sShopDir');
-
-        if (empty($shopDir)) {
-            // This test requires sShopDir to be configured because formJsFileUrl()
-            // resolves file paths relative to the shop directory to determine mtime
-            $this->markTestSkipped('sShopDir not configured in test environment');
-        }
+        // In OXID 8.0, use BasicContextInterface instead of Config::getConfigParam('sShopDir')
+        $shopDir = $this->get(BasicContextInterface::class)->getSourcePath();
 
         $file = tempnam($shopDir, 'test_');
         file_put_contents($file, 'dummy content');

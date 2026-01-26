@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\MediaLibrary\Transition\Core;
 
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use OxidEsales\MediaLibrary\Media\Service\MediaResourceInterface;
 
 /**
@@ -32,7 +33,8 @@ class ViewConfig extends ViewConfig_parent
     public function formJsFileUrl(string $fileUrl): string
     {
         $config = Registry::getConfig();
-        $shopDir = $config->getConfigParam('sShopDir') ?? '';
+        // In OXID 8.0, sShopDir config is no longer available via Config::getConfigParam()
+        $shopDir = $this->getService(BasicContextInterface::class)->getSourcePath();
         $filePath = str_replace(
             rtrim($config->getCurrentShopUrl(false) ?? '', '/'),
             rtrim($shopDir, '/'),
