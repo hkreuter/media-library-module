@@ -221,6 +221,7 @@ class MediaResourceTest extends TestCase
                 'shopConfig' => $this->createStub(Config::class),
                 'namingService' => $namingService = $this->createMock(NamingServiceInterface::class),
                 'moduleSettings' => $this->createStub(ModuleSettingsInterface::class),
+                'basicContext' => $this->createStub(BasicContextInterface::class),
             ])
             ->onlyMethods(['getPathToMediaFiles'])
             ->getMock();
