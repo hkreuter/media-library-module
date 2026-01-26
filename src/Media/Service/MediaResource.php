@@ -7,6 +7,7 @@
 
 namespace OxidEsales\MediaLibrary\Media\Service;
 
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use OxidEsales\MediaLibrary\Settings\Service\ModuleSettingsInterface;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\MediaLibrary\Media\DataType\FilePath;
@@ -22,13 +23,14 @@ class MediaResource implements MediaResourceInterface
         protected Config $shopConfig,
         protected NamingServiceInterface $namingService,
         protected ModuleSettingsInterface $moduleSettings,
+        protected BasicContextInterface $basicContext,
     ) {
     }
 
     public function getPathToMediaFiles(string $folderName = ''): string
     {
         return Path::join(
-            $this->shopConfig->getConfigParam('sShopDir'),
+            $this->basicContext->getSourcePath(),
             self::MEDIA_PATH,
             $folderName
         );
