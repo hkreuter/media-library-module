@@ -1,20 +1,38 @@
 <?php
 
 /**
- * Bootstrap for module integration tests.
- * Sets up the shop context when running tests from the module directory.
+ * Bootstrap for module tests.
  *
  * @phpcs:disable PSR1.Files.SideEffects
- * Bootstrap files inherently mix constant definitions (define/const) with
- * side effects (require, autoloader registration, etc). This is the standard
- * pattern for test bootstraps - their purpose IS to execute setup code.
  */
 
 declare(strict_types=1);
 
-// The shop root is two directories up from the module directory
-// /var/www/ARCHIVE/media-library-module -> /var/www
-$shopRoot = dirname(__DIR__, 3);
+// Detect shop root - works for both:
+// 1. Local ARCHIVE setup: /var/www/ARCHIVE/media-library-module/tests -> /var/www
+// 2. Composer-installed: /var/www/vendor/oxid-esales/media-library-module/tests -> /var/www
+// 3. GitHub Actions (symlinked): /var/www/tests -> /var/www
+
+$possibleShopRoots = [
+    dirname(__DIR__, 3),                    // ARCHIVE setup
+    dirname(__DIR__, 4),                    // Composer vendor setup
+    dirname(__DIR__),                       // Tests symlinked to shop root
+    getenv('SHOP_ROOT_PATH') ?: null,       // Environment variable
+];
+
+$shopRoot = null;
+foreach ($possibleShopRoots as $path) {
+    if ($path && is_file($path . '/vendor/autoload.php') && is_file($path . '/source/bootstrap.php')) {
+        $shopRoot = $path;
+        break;
+    }
+}
+
+if (!$shopRoot) {
+    // Fallback: just use module autoloader for unit tests
+    require dirname(__DIR__) . '/vendor/autoload.php';
+    return;
+}
 
 // Override the project root detection
 define('INSTALLATION_ROOT_PATH', $shopRoot);
@@ -24,8 +42,11 @@ define('OX_BASE_PATH', INSTALLATION_ROOT_PATH . DIRECTORY_SEPARATOR . 'source' .
 // Load shop autoloader
 require VENDOR_PATH . 'autoload.php';
 
-// Load module autoloader
-require dirname(__DIR__) . '/vendor/autoload.php';
+// Load module autoloader if it exists separately
+$moduleAutoloader = dirname(__DIR__) . '/vendor/autoload.php';
+if (is_file($moduleAutoloader) && realpath($moduleAutoloader) !== realpath(VENDOR_PATH . 'autoload.php')) {
+    require $moduleAutoloader;
+}
 
 use OxidEsales\EshopCommunity\Core\Autoload\BackwardsCompatibilityAutoload;
 use OxidEsales\EshopCommunity\Core\Autoload\ModuleAutoload;
