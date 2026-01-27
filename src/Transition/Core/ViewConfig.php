@@ -36,7 +36,7 @@ class ViewConfig extends ViewConfig_parent
         // In OXID 8.0, sShopDir config is no longer available via Config::getConfigParam()
         $shopDir = $this->getService(BasicContextInterface::class)->getSourcePath();
         $filePath = str_replace(
-            rtrim($config->getCurrentShopUrl(false) ?? '', '/'),
+            rtrim($config->getCurrentShopUrl(false), '/'),
             rtrim($shopDir, '/'),
             $fileUrl
         );
