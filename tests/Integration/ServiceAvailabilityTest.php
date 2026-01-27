@@ -29,7 +29,10 @@ class ServiceAvailabilityTest extends IntegrationTestCase
     public static function setUpBeforeClass(): void
     {
         $basicContext = new \OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext();
-        $containerBuilder = new \OxidEsales\EshopCommunity\Internal\Framework\DIContainer\ContainerBuilder($basicContext, $basicContext->getDefaultShopId());
+        $containerBuilder = new \OxidEsales\EshopCommunity\Internal\Framework\DIContainer\ContainerBuilder(
+            $basicContext,
+            $basicContext->getDefaultShopId()
+        );
         $container = $containerBuilder->getContainer();
         foreach ($container->getDefinitions() as $id => $definition) {
             $definition->setPublic(true);

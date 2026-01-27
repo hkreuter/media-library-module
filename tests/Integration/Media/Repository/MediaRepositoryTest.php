@@ -123,8 +123,12 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
         }
     }
 
-    private function createTestItemsWithPrefix(int $amount, string $folderId, string $oxidPrefix, int $altTextLanguageId = 1): void
-    {
+    private function createTestItemsWithPrefix(
+        int $amount,
+        string $folderId,
+        string $oxidPrefix,
+        int $altTextLanguageId = 1
+    ): void {
         $queryBuilder = $this->getAddItemQueryBuilder();
         $queryBuilderFactory = $this->get(QueryBuilderFactoryInterface::class);
 
