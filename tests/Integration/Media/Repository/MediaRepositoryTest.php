@@ -16,8 +16,10 @@ use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
 use OxidEsales\MediaLibrary\Media\DataType\Media;
 use OxidEsales\MediaLibrary\Media\Exception\MediaNotFoundException;
 use OxidEsales\MediaLibrary\Media\Exception\WrongMediaIdGivenException;
+use OxidEsales\MediaLibrary\Media\Repository\MediaFactory;
 use OxidEsales\MediaLibrary\Media\Repository\MediaFactoryInterface;
 use OxidEsales\MediaLibrary\Media\Repository\MediaRepository;
+use OxidEsales\MediaLibrary\Media\Repository\MediaAltRepository;
 use OxidEsales\MediaLibrary\Media\Repository\MediaAltRepositoryInterface;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -259,18 +261,24 @@ class MediaRepositoryTest extends RepositoryIntegrationTestCase
     }
 
     private function getSut(
+        ?QueryBuilderFactoryInterface $queryBuilderFactory = null,
         ?ContextInterface $context = null,
-        ?ConnectionFactoryInterface $connectionFactory = null,
         ?MediaFactoryInterface $mediaFactory = null,
         ?LanguageInterface $language = null,
         ?MediaAltRepositoryInterface $mediaAltRepository = null
     ): MediaRepository {
+        $qbFactory = $queryBuilderFactory ?? $this->get(QueryBuilderFactoryInterface::class);
         return new MediaRepository(
-            connectionFactory: $connectionFactory ?? $this->get(ConnectionFactoryInterface::class),
+            queryBuilderFactory: $qbFactory,
             context: $context ?? $this->get(ContextInterface::class),
-            mediaFactory: $mediaFactory ?? $this->get(MediaFactoryInterface::class),
-            language: $language ?? $this->get(LanguageInterface::class),
-            mediaAltRepository: $mediaAltRepository ?? $this->get(MediaAltRepositoryInterface::class)
+            mediaFactory: $mediaFactory ?? new MediaFactory(),
+            language: $language ?? $this->createConfiguredStub(LanguageInterface::class, [
+                'getBaseLanguage' => 0,
+            ]),
+            mediaAltRepository: $mediaAltRepository ?? new MediaAltRepository(
+                queryBuilderFactory: $qbFactory,
+                connectionFactory: $this->get(ConnectionFactoryInterface::class)
+            )
         );
     }
 

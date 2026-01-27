@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Tests\Integration\Media\Repository;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
 use OxidEsales\MediaLibrary\Media\Exception\MediaNotFoundException;
+use OxidEsales\MediaLibrary\Media\Repository\MediaFactory;
 use OxidEsales\MediaLibrary\Media\Repository\MediaFactoryInterface;
 use OxidEsales\MediaLibrary\Media\Repository\PreloadMediaRepository;
 use OxidEsales\MediaLibrary\Media\Repository\PreloadMediaRepositoryInterface;
@@ -222,9 +222,11 @@ class PreloadMediaRepositoryTest extends RepositoryIntegrationTestCase
     private function getSut(?LanguageInterface $language = null): PreloadMediaRepositoryInterface
     {
         return new PreloadMediaRepository(
-            connection: $this->get(ConnectionFactoryInterface::class)->create(),
-            mediaFactory: $this->get(MediaFactoryInterface::class),
-            language: $language ?? $this->get(LanguageInterface::class),
+            queryBuilderFactory: $this->get(QueryBuilderFactoryInterface::class),
+            mediaFactory: new MediaFactory(),
+            language: $language ?? $this->createConfiguredStub(LanguageInterface::class, [
+                'getBaseLanguage' => 0,
+            ]),
         );
     }
 }

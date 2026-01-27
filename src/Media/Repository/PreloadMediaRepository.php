@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace OxidEsales\MediaLibrary\Media\Repository;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Result;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\MediaLibrary\Language\Core\LanguageInterface;
 use OxidEsales\MediaLibrary\Media\DataType\MediaInterface;
 use OxidEsales\MediaLibrary\Media\Exception\MediaNotFoundException;
@@ -24,7 +25,7 @@ class PreloadMediaRepository implements PreloadMediaRepositoryInterface
     protected array $preloadedMedia = [];
 
     public function __construct(
-        private readonly Connection $connection,
+        private readonly QueryBuilderFactoryInterface $queryBuilderFactory,
         private readonly MediaFactoryInterface $mediaFactory,
         private readonly LanguageInterface $language,
     ) {
@@ -61,20 +62,18 @@ class PreloadMediaRepository implements PreloadMediaRepositoryInterface
             return;
         }
 
-        $sql = $this->getMediaSelectSqlPart() . "  WHERE m.OXID in (:OXIDLIST)";
-        $params = [
-            'OXLANGUAGEID' => $this->language->getBaseLanguage(),
-            'OXIDLIST' => $this->idsToPreload
-        ];
-        $types = [
-            'OXLANGUAGEID' => ParameterType::INTEGER,
-            'OXIDLIST' => \Doctrine\DBAL\ArrayParameterType::STRING
-        ];
-        $result = $this->connection->executeQuery(
-            sql: $sql,
-            params: $params,
-            types: $types
-        );
+        $queryBuilder = $this->queryBuilderFactory->create();
+        $queryBuilder
+            ->select('m.*', 'j.DDFILENAME as FOLDERNAME', 't.OXALTSHORTTEXT')
+            ->from('ddmedia', 'm')
+            ->leftJoin('m', 'ddmedia', 'j', "j.OXID = m.DDFOLDERID AND m.DDFOLDERID <> ''")
+            ->leftJoin('m', 'ddmedia_translations', 't', 't.OXOBJECTID = m.OXID AND t.OXLANGUAGEID = :OXLANGUAGEID')
+            ->where('m.OXID IN (:OXIDLIST)')
+            ->setParameter('OXLANGUAGEID', $this->language->getBaseLanguage())
+            ->setParameter('OXIDLIST', $this->idsToPreload, ArrayParameterType::STRING);
+
+        /** @var Result $result */
+        $result = $queryBuilder->executeQuery();
 
         $this->idsToPreload = [];
 
@@ -90,12 +89,5 @@ class PreloadMediaRepository implements PreloadMediaRepositoryInterface
         }
 
         return $this->preloadedMedia[$mediaId];
-    }
-
-    private function getMediaSelectSqlPart(): string
-    {
-        return "SELECT m.*, j.DDFILENAME as FOLDERNAME, t.OXALTSHORTTEXT FROM ddmedia m
-            LEFT JOIN ddmedia j ON j.OXID=m.DDFOLDERID AND m.DDFOLDERID <> ''
-            LEFT JOIN ddmedia_translations t ON t.OXOBJECTID = m.OXID AND t.OXLANGUAGEID = :OXLANGUAGEID";
     }
 }

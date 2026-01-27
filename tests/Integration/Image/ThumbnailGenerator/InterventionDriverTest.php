@@ -10,7 +10,6 @@ namespace OxidEsales\MediaLibrary\Tests\Integration\Image\ThumbnailGenerator;
 use Generator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
-use org\bovigo\vfs\vfsStream;
 use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSize;
 use OxidEsales\MediaLibrary\Image\DataTransfer\ImageSizeInterface;
 use OxidEsales\MediaLibrary\Image\ThumbnailGenerator\InterventionDriver;
@@ -22,6 +21,34 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(InterventionDriver::class)]
 class InterventionDriverTest extends IntegrationTestCase
 {
+    private string $tempDir;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->tempDir = sys_get_temp_dir() . '/media_library_test_' . uniqid();
+        mkdir($this->tempDir, 0777, true);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $this->removeDirectory($this->tempDir);
+    }
+
+    private function removeDirectory(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
     #[DataProvider('getThumbnailDataProvider')]
     public function testGenerateThumbnail(
         $sourceWidth,
@@ -31,16 +58,14 @@ class InterventionDriverTest extends IntegrationTestCase
         $expectedThumbnailHeight,
         $cropThumbnail
     ): void {
-        $rootPath = vfsStream::setup()->url();
-
         $imageManager = new ImageManager(new Driver());
         $sut = $this->getSut(imageManager: $imageManager);
 
-        $sourcePath = $rootPath . '/source.jpg';
+        $sourcePath = $this->tempDir . '/source.jpg';
         $img = $imageManager->create($sourceWidth, $sourceHeight);
         $img->save($sourcePath);
 
-        $thumbnailPath = $rootPath . '/thumbnail.jpg';
+        $thumbnailPath = $this->tempDir . '/thumbnail.jpg';
         $sut->generateThumbnail(
             sourcePath: $sourcePath,
             thumbnailPath: $thumbnailPath,
@@ -57,15 +82,13 @@ class InterventionDriverTest extends IntegrationTestCase
 
     public function testInterventionExceptionDoesntExplodeButLogsError(): void
     {
-        $rootPath = vfsStream::setup()->url();
-
         $loggerSpy = $this->createMock(LoggerInterface::class);
         $loggerSpy->expects($this->once())->method('error');
 
         $sut = $this->getSut(logger: $loggerSpy);
 
         $sourcePath = 'notExisting';
-        $thumbnailPath = $rootPath . '/thumbnail.jpg';
+        $thumbnailPath = $this->tempDir . '/thumbnail.jpg';
 
         $sut->generateThumbnail(
             sourcePath: $sourcePath,
