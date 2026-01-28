@@ -20,8 +20,8 @@ install:
     vendor/bin/oe-console oe:module:activate ddoemedialibrary
     vendor/bin/oe-console oe:theme:activate apex
 
-    mkdir -p vendor/oxid-esales/media-library-module/tests/Codeception/Support/Data/generated
-    mysqldump -h mysql -u root -proot example > vendor/oxid-esales/media-library-module/tests/Codeception/Support/Data/generated/dump.sql
+    mkdir -p tests/Codeception/Support/Data/generated
+    mysqldump -h mysql -u root -proot example > tests/Codeception/Support/Data/generated/dump.sql
 
 runscript: &runscript
   matrix:
